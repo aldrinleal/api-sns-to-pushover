@@ -177,7 +177,9 @@ class SnsToPushover {
         val message = PushoverClient.Message(
                 user = req.params.path["user"]!!,
                 title = "cw2pushover: ${req.body.subject} (${cwMessage.alarmName}",
-                message = contentsAsYaml)
+                message = contentsAsYaml,
+                url = req.body.unsubscribeUrl,
+                urlTitle = "Unsubscribe Notification")
 
         pushoverClient.sendMessage(message)
     }
