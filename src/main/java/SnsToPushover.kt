@@ -6,6 +6,7 @@ import com.amazonaws.services.sns.util.SignatureChecker
 import com.fasterxml.jackson.annotation.JsonCreator
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import com.fasterxml.jackson.module.kotlin.registerKotlinModule
@@ -190,11 +191,11 @@ class SnsToPushover {
 
         val validateUserResult = pushoverClient.validateUser(PushoverClient.UserValidationRequest(
                 user = req.params.path["user"]!!
-        ))
+        )) as ObjectNode
 
+        val validateUserResultStatus = validateUserResult.get("status")?.intValue() ?: -1
 
-
-
+        check(1 == validateUserResultStatus, { "Invalid Status (last request: ${validateUserResult})" })
 
         val result = URL(req.body.subscribeUrl).openStream().readBytes().toString(Charset.defaultCharset())
 
