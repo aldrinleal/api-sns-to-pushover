@@ -182,7 +182,19 @@ class SnsToPushover {
     }
 
     fun onSubscribe(req: PassthroughRequest<SnsRequest>) {
-        println("onSubscribe: req=${req}")
+        val reqAsString = MAPPER.writeValueAsString(req)
+
+        println("onSubscribe: req=${reqAsString}")
+
+        val pushoverClient = PushoverClient(req.stageVariables["PUSHOVER_SERVICE_TOKEN"]!!)
+
+        val validateUserResult = pushoverClient.validateUser(PushoverClient.UserValidationRequest(
+                user = req.params.path["user"]!!
+        ))
+
+
+
+
 
         val result = URL(req.body.subscribeUrl).openStream().readBytes().toString(Charset.defaultCharset())
 
